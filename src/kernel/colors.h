@@ -1,0 +1,20 @@
+#pragma once
+
+enum{
+	C_BLACK=1,
+	C_DRK_BLU,
+	C_DRK_GRN,
+	C_DRK_CYN,
+	C_DRK_RED,
+	C_DRK_MGN,
+	C_BROWN,
+	C_LGT_GRY,
+	C_DRK_GRY,
+	C_LGT_BLU,
+	C_LGT_GRN,
+	C_LGT_CYN,
+	C_LGT_RED,
+	C_LGT_MGN,
+	C_YELLOW,
+	C_WHITE
+};

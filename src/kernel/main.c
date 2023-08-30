@@ -1,12 +1,8 @@
-static struct{
-	char c;
-	struct{
-		int fg:4;
-		int bg:4;
-	} color;
-} *v_buf=(void*)0xb8000;
+#include "colors.h"
+#include "display.h"
 
 void main(){
-	v_buf[4].c='J';
+	for(int i=0;i<80*25;i++)
+		v_buf[i].c=' ';//=mk_D_char(' ', C_DRK_BLU, C_DRK_RED);
 	while(1);
 }

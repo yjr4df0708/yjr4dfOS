@@ -23,9 +23,10 @@ build: clean kernel boot
 
 boot: kernel
 	fasm -d K_SIZE=$$(($$(stat -c "%s" $(BIN)/kernel.bin)/512+1)) $(SRC)/bootloader/boot.asm $(BIN)/boot.bin
+	echo -e "Kernel binary is $$(($$(stat -c "%s" $(BIN)/kernel.bin)/512+1)) sectors long."
 
 kernel: $(KASMTAR) $(KCTAR)
-	$(LD) -o $(BIN)/kernel.elf -Ttext 0x8000 $(LDPRIORITY) --start-group $(filter-out $(LDPRIORITY),$(shell find $(BIN)/kernel -name "*.o" | xargs)) --end-group --oformat elf32-i386
+	$(LD) -o $(BIN)/kernel.elf -Ttext 0x8000 $(LDPRIORITY) --start-group $(filter-out $(LDPRIORITY),$(KCTAR) $(KASMTAR)) --end-group --oformat elf32-i386
 	$(OBJCP) -O binary $(BIN)/kernel.elf $(BIN)/kernel.bin
 
 $(BIN)/%.o: $(SRC)/%.c

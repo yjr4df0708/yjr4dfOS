@@ -16,7 +16,7 @@ load_kernel:
 	;#init counter to 0
 	xor bp, bp
 	.loop:
-	cmp bp, [K_SIZE]
+	cmp bp, K_SIZE
 	je .end
 	mov bx, bp
 	shl bx, 5;instead of mul 512
