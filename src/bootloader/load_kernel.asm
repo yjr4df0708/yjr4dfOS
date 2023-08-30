@@ -35,7 +35,7 @@ load_kernel:
 	mov ah, 2
 	mov dl, [BOOT_DISK]
 	int 0x13
-	jc .c2
+	jnc .c2
 	mov byte [ERRC+1], "b"
 	jmp B_ERR
 	.c2:
