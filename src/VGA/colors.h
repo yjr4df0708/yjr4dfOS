@@ -1,7 +1,7 @@
 #pragma once
 
 enum{
-	C_BLACK=1,
+	C_BLACK=0,
 	C_DRK_BLU,
 	C_DRK_GRN,
 	C_DRK_CYN,

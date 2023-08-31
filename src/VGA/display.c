@@ -1,4 +1,5 @@
-#include "display.h"
+#include <util/types.h>
+#include <VGA/display.h>
 
 D_char mk_D_char(char c, uint8_t fg, uint8_t bg){
 	D_char out;

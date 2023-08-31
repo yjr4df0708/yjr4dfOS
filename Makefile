@@ -1,11 +1,13 @@
-CC=/usr/local/i386elfgcc/bin/i386-elf-gcc
-OBJCP=/usr/local/i386elfgcc/bin/i386-elf-objcopy
-LD=/usr/local/i386elfgcc/bin/i386-elf-ld
+CC=gcc
+OBJCP=objcopy
+LD=ld
+CCOPTS=-m32
+LDOPTS=-m elf_i386
 SRC=./src
 BIN=./bin
-KCSRC := $(shell find $(SRC)/kernel -name "*.c")
+KCSRC := $(shell find $(SRC) -name "*.c")
 KCTAR := $(patsubst $(SRC)/%.c,$(BIN)/%.o,$(KCSRC))
-KASMSRC := $(shell find $(SRC)/kernel -name "*.asm")
+KASMSRC := $(filter-out $(SRC)/empty.asm $(wildcard $(SRC)/bootloader/*),$(shell find $(SRC) -name "*.asm"))
 KASMTAR := $(patsubst $(SRC)/%.asm,$(BIN)/%.o,$(KASMSRC))
 LDPRIORITY := $(BIN)/kernel/entry.o $(BIN)/kernel/main.o
 
@@ -26,12 +28,12 @@ boot: kernel
 	echo -e "Kernel binary is $$(($$(stat -c "%s" $(BIN)/kernel.bin)/512+1)) sectors long."
 
 kernel: $(KASMTAR) $(KCTAR)
-	$(LD) -o $(BIN)/kernel.elf -Ttext 0x8000 $(LDPRIORITY) --start-group $(filter-out $(LDPRIORITY),$(KCTAR) $(KASMTAR)) --end-group --oformat elf32-i386
+	$(LD) $(LDOPTS) -o $(BIN)/kernel.elf -Ttext 0x8000 $(LDPRIORITY) --start-group $(filter-out $(LDPRIORITY),$(KCTAR) $(KASMTAR)) --end-group --oformat elf32-i386
 	$(OBJCP) -O binary $(BIN)/kernel.elf $(BIN)/kernel.bin
 
 $(BIN)/%.o: $(SRC)/%.c
 	mkdir -p $(patsubst $(SRC)%,$(BIN)%,./$(shell dirname $<))
-	$(CC) -c $< -o $(patsubst $(SRC)%.c,$(BIN)%.o,./$<) $(addprefix -I ,$(shell dirname $(shell echo $(KCSRC) | tr ' ' '\n' | sort -u | xargs)))
+	$(CC) $(CCOPTS) -c $< -o $(patsubst $(SRC)%.c,$(BIN)%.o,./$<) -I $(SRC)
 
 $(BIN)/%.o: $(SRC)/%.asm
 	mkdir -p $(patsubst $(SRC)%,$(BIN)%,./$(shell dirname $<))
