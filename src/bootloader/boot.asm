@@ -51,6 +51,7 @@ main32:
 
 	jmp kernel
 
+cli
 hlt
 
 use16
@@ -68,6 +69,7 @@ B_ERR:
 	mov ah, 0x0e
 	mov al, [ERRC+1]
 	int 0x10
+	cli
 	hlt
 
 ERRC:

@@ -1,9 +1,7 @@
-
 CODE_SEG=gdt_code-gdt_start
 DATA_SEG=gdt_data-gdt_start
 
 gdt_start:
-gdt_null:
 	dd 0x00
 	dd 0x00
 gdt_code:
@@ -20,7 +18,6 @@ gdt_data:
 	db 10010010b
 	db 11001111b
 	db 0x00
-gdt_end:
 gdt_descriptor:
-	dw gdt_end-gdt_start-1
+	dw $-gdt_start-1
 	dd gdt_start
