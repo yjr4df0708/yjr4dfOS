@@ -22,7 +22,7 @@ inline void outw(uint16_t p, uint16_t v){
 }
 
 inline uint32_t inl(uint16_t p){
-	uint8_t r;
+	uint32_t r;
 	asm volatile("inl %1, %0":"=a"(r):"Nd"(p));
 	return r;
 }

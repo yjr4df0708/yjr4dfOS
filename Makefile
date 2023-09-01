@@ -1,7 +1,7 @@
 CC=gcc
 OBJCP=objcopy
 LD=ld
-CCOPTS=-m32
+CCOPTS=-m32 -ffreestanding
 LDOPTS=-m elf_i386
 SRC=./src
 BIN=./bin
