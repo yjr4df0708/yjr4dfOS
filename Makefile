@@ -1,7 +1,7 @@
 CC=gcc
 OBJCP=objcopy
 LD=ld
-CCOPTS=-m32 -ffreestanding
+CCOPTS=-m32 -ffreestanding -g
 LDOPTS=-m elf_i386
 SRC=./src
 BIN=./bin
@@ -11,7 +11,7 @@ KASMSRC := $(filter-out $(SRC)/empty.asm $(wildcard $(SRC)/bootloader/*),$(shell
 KASMTAR := $(patsubst $(SRC)/%.asm,$(BIN)/%.o,$(KASMSRC))
 LDPRIORITY := $(BIN)/kernel/entry.o $(BIN)/kernel/main.o
 
-all: build run
+all: run
 
 clean:
 	rm -rf $(BIN)
@@ -30,6 +30,7 @@ boot: kernel
 kernel: $(KASMTAR) $(KCTAR)
 	$(LD) $(LDOPTS) -o $(BIN)/kernel.elf -Ttext 0x8000 $(LDPRIORITY) --start-group $(filter-out $(LDPRIORITY),$(KCTAR) $(KASMTAR)) --end-group --oformat elf32-i386
 	$(OBJCP) -O binary $(BIN)/kernel.elf $(BIN)/kernel.bin
+	$(OBJCP) --only-keep-debug $(BIN)/kernel.elf $(BIN)/kernel.sym
 
 $(BIN)/%.o: $(SRC)/%.c
 	mkdir -p $(patsubst $(SRC)%,$(BIN)%,./$(shell dirname $<))
@@ -39,5 +40,14 @@ $(BIN)/%.o: $(SRC)/%.asm
 	mkdir -p $(patsubst $(SRC)%,$(BIN)%,./$(shell dirname $<))
 	fasm $< $(patsubst $(SRC)%.asm,$(BIN)%.o,./$<)
 
-run:
+run_current:
 	qemu-system-x86_64 -drive format=raw,file=$(BIN)/osimage.bin,index=0,if=floppy -m 128M
+
+run: build run_current
+
+debug_current:
+	qemu-system-x86_64 -drive format=raw,file=$(BIN)/osimage.bin,index=0,if=floppy -m 128M -s -S &
+	gdb -s $(BIN)/kernel.sym -ex "target remote localhost:1234"
+
+debug: build debug_current
+

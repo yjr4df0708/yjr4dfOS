@@ -8,9 +8,12 @@
 #define FORMAT_BUFSIZE 256
 #endif
 
+static char digits[2][16]={
+	"0123456789abcdef",
+	"0123456789ABCDEF"
+};
+
 char *format(char *buf, char *fmt, ...){
-	char digl[16]="0123456789abcdef";
-	char digh[16]="0123456789ABCDEF";
 	va_list l;
 	va_start(l, fmt);
 	int ii=0, oi=0;
@@ -143,8 +146,7 @@ char *format(char *buf, char *fmt, ...){
 						//case ('l'+1<<8)+'i':v2=va_arg(l, int64_t);break;//int64
 						default:goto exit;
 					}
-					n=v2<0;
-					v=n?-v2:v2;
+					v=(n=v2<0)?-v2:v2;
 				}else{
 					switch(high_8(type)){
 						case 0:
@@ -164,7 +166,7 @@ char *format(char *buf, char *fmt, ...){
 				len+=(n||sign_space)+decor*v0*((base==8)+2*(base==16));
 				int i=0;
 				while(p++<len){
-					buf2[len-1-i++]=(low_8(type)=='X'?digh:digl)[v%base];
+					buf2[len-1-i++]=digits[low_8(type)=='X'][v%base];
 					v/=base;
 				}
 				int o=1;
